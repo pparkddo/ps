@@ -59,6 +59,7 @@ for index in range(n):
             if value == turn:
                 for traverse in traverses:
                     board[traverse[0]][traverse[1]] = turn
+                break
 
 print_board(board)
 
