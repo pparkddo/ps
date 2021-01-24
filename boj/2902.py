@@ -1,0 +1,1 @@
+print("".join([each[0] for each in input().split("-")]))
