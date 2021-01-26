@@ -1,9 +1,11 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
 public class Main {
 
@@ -37,26 +39,21 @@ public class Main {
         return candidates.get(0);
     }
 
-    public static void main(String[] args) {
-        Scanner in = new Scanner(System.in);
-
-        int numbers[] = new int [in.nextInt()];
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int numbers[] = new int[Integer.parseInt(br.readLine())];
+        int sum = 0;
         for (int i = 0; i < numbers.length; i++) {
-            numbers[i] = in.nextInt();
+            numbers[i] = Integer.parseInt(br.readLine());
+            sum = sum + numbers[i];
         }
+        br.close();
 
         Arrays.sort(numbers);
-
-        int sum = 0;
-        for (int number : numbers) {
-            sum = sum + number;
-        }
 
         System.out.println(Math.round((float)sum/numbers.length));
         System.out.println(numbers[numbers.length/2]);
         System.out.println(getMode(numbers));
         System.out.println(getRange(numbers));
-
-        in.close();
     }
 }
