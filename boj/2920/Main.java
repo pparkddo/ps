@@ -1,7 +1,9 @@
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 public class Main {
     
@@ -16,17 +18,14 @@ public class Main {
             scales.add(Integer.parseInt(st.nextToken()));
         }
 
-        List<Integer> diffs = new ArrayList<>();
-        for (int index = 0; index < scales.size()-1; index++) {
-            diffs.add(scales.get(index+1)-scales.get(index));
-        }
-
-        if (diffs.stream().allMatch(diff -> diff == 1)) {
+        List<Integer> ascending = scales.stream().sorted().collect(Collectors.toList());
+        if (scales.equals(ascending)) {
             System.out.println("ascending");
             return;
         };
 
-        if (diffs.stream().allMatch(diff -> diff == -1)) {
+        List<Integer> descending = scales.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
+        if (scales.equals(descending)) {
             System.out.println("descending");
             return;
         };
