@@ -8,8 +8,8 @@ public class Main {
 
     private static int max = Integer.MIN_VALUE;
 
-    private static int getIndex(int n, int row, int column) {
-        return row * n + column;
+    private static int getIndex(int m, int row, int column) {
+        return row * m + column;
     }
 
     private static void assignAdjacent(int n, int m, int row, int column, int[][] isAdjacent, int value) {
@@ -45,7 +45,7 @@ public class Main {
         
         for (int row = 0; row < n; row++) {
             for (int column = 0; column < m; column++) {
-                int index = getIndex(n, row, column);
+                int index = getIndex(m, row, column);
                 if (index < startIndex) {
                     continue;
                 }
