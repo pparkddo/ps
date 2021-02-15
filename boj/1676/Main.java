@@ -9,6 +9,11 @@ public class Main {
         int n = Integer.parseInt(in.readLine());
         in.close();
 
-        System.out.println(n/5 + n/25 + n/125);
+        int answer = 0;
+        while (n >= 5) {
+            answer += n / 5;
+            n /= 5;
+        }
+        System.out.println(answer);
     }
 }
