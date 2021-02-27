@@ -21,6 +21,9 @@ class Solution {
     private boolean isPossible(LocalTime rideTime) {
         PriorityQueue<LocalTime> queue = new PriorityQueue<>();
         for (String s: timetable) {
+            if (s.equals("24:00")) {
+                queue.add(LocalTime.of(23, 59));
+            }
             queue.add(LocalTime.of(getHour(s), getMinute(s)));
         }
         queue.add(rideTime);
@@ -33,15 +36,15 @@ class Solution {
                 if (bus.size() >= m) {
                     continue;
                 }
-                if (rideTime.compareTo(time) < 0) {
-                    return true;
-                }
                 if (time.compareTo(queue.peek()) >= 0) {
                     bus.add(queue.poll());
                 }
             }
         }
-        return false;
+        if (queue.isEmpty()) {
+            return time.compareTo(rideTime) >= 0;
+        }
+        return time.compareTo(rideTime) >= 0 && rideTime.compareTo(queue.peek()) < 0;
     }
 
     public String solution(int n, int t, int m, String[] timetable) {
@@ -57,9 +60,6 @@ class Solution {
             };
             rideTime = rideTime.minusMinutes(1);
         }
-
-        // LocalTime rideTime = LocalTime.of(9, 0);
-        // System.out.println(isPossible(rideTime));
 
         return rideTime.toString();
     }
