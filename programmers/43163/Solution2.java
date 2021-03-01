@@ -12,7 +12,7 @@ class Node {
     }
 }
 
-class Solution {
+class Solution2 {
 
     String begin;
     String target;
