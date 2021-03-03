@@ -3,7 +3,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 class Point {
 
@@ -14,6 +16,12 @@ class Point {
         this.row = row;
         this.column = column;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        Point point = (Point) obj;
+        return this.row == point.row && this.column == point.column;
+    }
 }
 
 class Shape {
@@ -23,11 +31,22 @@ class Shape {
     Shape(Point... points) {
         this.points = points;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        Shape shape = (Shape) obj;
+        for (int i = 0; i < points.length; i++) {
+            if (!this.points[i].equals(shape.points[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
 
 public class Main {
 
-    private static final List<Shape> shapes = new ArrayList<Shape>(Arrays.asList(new Shape[] {
+    private static final Set<Shape> shapes = new HashSet<Shape>(Arrays.asList(new Shape[] {
         // Line Shapes Turns
         new Shape(new Point(0, 0), new Point(0, 1), new Point(0, 2), new Point(0, 3)),
         new Shape(new Point(0, 0), new Point(1, 0), new Point(2, 0), new Point(3, 0)),
