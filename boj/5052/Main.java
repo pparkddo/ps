@@ -1,36 +1,19 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Main {
 
     private static String solution(int n, String[] numbers) {
-        Set<String> container = new HashSet<>();
-        for (String number : numbers) {
-            container.add(number);
+        Trie trie = new Trie();
+        for (String each : numbers) {
+            trie.insert(each);
         }
-        return isConsistent(container) ? "YES" : "NO";
+        return trie.isConsistent() ? "YES" : "NO";
     }
 
-    private static boolean isConsistent(Set<String> container) {
-        for (String number : container) {
-            int digitLength = getDigitLength(number);
-            for (int i = 1; i < digitLength; i++) {
-                String n = number.substring(0, digitLength-i);
-                if (container.contains(n)) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    private static int getDigitLength(String number) {
-        return number.length();
-    }
-    
     public static void main(String[] args) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         StringBuilder answers = new StringBuilder();
@@ -46,4 +29,92 @@ public class Main {
         in.close();
         System.out.println(answers.toString().trim());
     }
+}
+
+class Trie {
+
+    TrieNode root = new TrieNode();
+
+    public void insert(String word) {
+        TrieNode node = this.root;
+
+        for (int index = 0; index < word.length(); index++) {
+            char c = word.charAt(index);
+            if (!node.children.containsKey(c)) {
+                node.children.put(c, new TrieNode());
+            }
+            node = node.children.get(c);
+        }
+
+        node.isLastCharacter = true;
+    }
+
+    public boolean contains(String word) {
+        TrieNode node = this.root;
+
+        for (int index = 0; index < word.length(); index++) {
+            char c = word.charAt(index);
+            TrieNode child = node.children.get(c);
+            if (child == null) {
+                return false;
+            }
+            node = child;
+        }
+        
+        return node.isLastCharacter;
+    }
+
+    public void delete(String word) {
+        delete(root, word, 0);
+    }
+
+    private void delete(TrieNode node, String word, int index) {
+        char c = word.charAt(index);
+
+        if (!node.children.containsKey(c)) {
+            return;
+        }
+
+        TrieNode child = node.children.get(c);
+        index++;
+
+        if (index == word.length()) {
+            if (!child.isLastCharacter) {
+                return;
+            }
+
+            child.isLastCharacter = false;
+            if (child.children.isEmpty()) {
+                node.children.remove(c);
+            }
+            return;
+        }
+
+        delete(child, word, index);
+        if (!child.isLastCharacter && child.children.isEmpty()) {
+            node.children.remove(c);
+        }
+    }
+
+    public boolean isConsistent() {
+        return isConsistent(root);
+    }
+
+    private boolean isConsistent(TrieNode node) {
+        if (!node.children.isEmpty() && node.isLastCharacter) {
+            return false;
+        }
+        for (TrieNode child : node.children.values()) {
+            if (!isConsistent(child)) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+
+class TrieNode {
+
+    Map<Character, TrieNode> children = new HashMap<>();
+    boolean isLastCharacter;
 }
