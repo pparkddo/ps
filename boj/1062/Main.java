@@ -7,60 +7,67 @@ import java.util.List;
 public class Main {
 
     private static final int MAX_ALPHABET_COUNT = 26;
+    private static final int FIXED_WORD_COUNT = 4;
 
     private static int solution(int n, int k, List<String> words) {
-        if (k < 5) {
+        List<Character> charactersToBeIncluded = List.of('a', 'c', 'i', 't', 'n');
+        if (k < charactersToBeIncluded.size()) {
             return 0;
         }
-        List<Integer> usedAlphabetMasks = getUsedAlphabetMasks(words);
-        return getMaximumReadableCount(0, 0, k, 0, usedAlphabetMasks);
+        if (k == MAX_ALPHABET_COUNT) {
+            return n;
+        } 
+        List<String> trimmed = trimWords(words);
+        int mask = getMask(charactersToBeIncluded);
+        return getMaximumReadableCount(0, 0, k - charactersToBeIncluded.size(), mask, trimmed);
     }
 
-    private static List<Integer> getUsedAlphabetMasks(List<String> words) {
-        List<Integer> usedAlphabetMasks = new ArrayList<>();
-        for (String word : words) {
-            int mask = 0;
-            for (char c : word.toCharArray()) {
-                int index = c - 'a';
-                mask |= (1 << index);
-            }
-            usedAlphabetMasks.add(mask);
+    private static int getMask(List<Character> charactersToBeIncluded) {
+        int mask = 0;
+        for (Character c : charactersToBeIncluded) {
+            mask |= (1 << c-'a');
         }
-        return usedAlphabetMasks;
+        return mask;
     }
 
-    private static int getMaximumReadableCount(int start, int depth, int k, int mask, List<Integer> usedAlphabetMasks) {
+    private static List<String> trimWords(List<String> words) {
+        List<String> trimmed = new ArrayList<>();
+        for (String word : words) {
+            trimmed.add(word.substring(FIXED_WORD_COUNT, word.length()-FIXED_WORD_COUNT));
+        }
+        return trimmed;
+    }
+
+    private static int getMaximumReadableCount(int start, int depth, int k, int mask, List<String> words) {
         if (depth == k) {
-            return getReadableCount(mask, usedAlphabetMasks);
+            return getReadableCount(mask, words);
         }
         int count = 0;
         for (int index = start; index < MAX_ALPHABET_COUNT; index++) {
+            if ((mask & (1 << index)) != 0) {
+                continue;
+            }
             mask |= (1 << index);
-            count = Math.max(count, getMaximumReadableCount(index+1, depth+1, k, mask, usedAlphabetMasks));
+            count = Math.max(count, getMaximumReadableCount(index+1, depth+1, k, mask, words));
             mask &= ~(1 << index);
         }
         return count;
     }
 
-    private static int getReadableCount(int mask, List<Integer> usedAlphabetMasks) {
+    private static int getReadableCount(int mask, List<String> words) {
         int count = 0;
-        for (Integer each : usedAlphabetMasks) {
-            if (isContainsAll(mask, each)) {
+        for (String word : words) {
+            if (isContainsAll(mask, word)) {
                 count++;
             }
         }
         return count;
     }
 
-    private static boolean isContainsAll(int mask, int test) {
-        if (test > mask) {
-            return false;
-        }
-        if (test == mask) {
-            return true;
-        }
-        for (int bitIndex = 0; bitIndex < MAX_ALPHABET_COUNT; bitIndex++) {
-            if ((mask & (1 << bitIndex)) < (test & (1 << bitIndex))) {
+    private static boolean isContainsAll(int mask, String word) {
+        for (char c : word.toCharArray()) {
+            int bitIndex = c - 'a';
+            if ((mask & (1 << bitIndex)) == 0) {
                 return false;
             }
         }
