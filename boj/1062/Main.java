@@ -19,7 +19,21 @@ public class Main {
         } 
         List<String> trimmed = trimWords(words);
         int mask = getMask(charactersToBeIncluded);
-        return getMaximumReadableCount(0, 0, k - charactersToBeIncluded.size(), mask, trimmed);
+        List<Integer> usedAlphabetMasks = getUsedAlphabetMasks(trimmed);
+        return getMaximumReadableCount(0, 0, k - charactersToBeIncluded.size(), mask, usedAlphabetMasks);
+    }
+
+    private static List<Integer> getUsedAlphabetMasks(List<String> words) {
+        List<Integer> usedAlphabetMasks = new ArrayList<>();
+        for (String word : words) {
+            int mask = 0;
+            for (char c : word.toCharArray()) {
+                int index = c - 'a';
+                mask |= (1 << index);
+            }
+            usedAlphabetMasks.add(mask);
+        }
+        return usedAlphabetMasks;
     }
 
     private static int getMask(List<Character> charactersToBeIncluded) {
@@ -38,9 +52,9 @@ public class Main {
         return trimmed;
     }
 
-    private static int getMaximumReadableCount(int start, int depth, int k, int mask, List<String> words) {
+    private static int getMaximumReadableCount(int start, int depth, int k, int mask, List<Integer> usedAlphabetMasks) {
         if (depth == k) {
-            return getReadableCount(mask, words);
+            return getReadableCount(mask, usedAlphabetMasks);
         }
         int count = 0;
         for (int index = start; index < MAX_ALPHABET_COUNT; index++) {
@@ -48,30 +62,24 @@ public class Main {
                 continue;
             }
             mask |= (1 << index);
-            count = Math.max(count, getMaximumReadableCount(index+1, depth+1, k, mask, words));
+            count = Math.max(count, getMaximumReadableCount(index+1, depth+1, k, mask, usedAlphabetMasks));
             mask &= ~(1 << index);
         }
         return count;
     }
 
-    private static int getReadableCount(int mask, List<String> words) {
+    private static int getReadableCount(int mask, List<Integer> usedAlphabetMasks) {
         int count = 0;
-        for (String word : words) {
-            if (isContainsAll(mask, word)) {
+        for (Integer each : usedAlphabetMasks) {
+            if (isContainsAll(mask, each)) {
                 count++;
             }
         }
         return count;
     }
 
-    private static boolean isContainsAll(int mask, String word) {
-        for (char c : word.toCharArray()) {
-            int bitIndex = c - 'a';
-            if ((mask & (1 << bitIndex)) == 0) {
-                return false;
-            }
-        }
-        return true;
+    private static boolean isContainsAll(int mask, int test) {
+        return (mask | test) == mask;
     }
 
     public static void main(String[] args) throws IOException {
