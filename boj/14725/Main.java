@@ -1,68 +1,66 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeMap;
 
 public class Main {
 
-    private static final String ROOT = "ROOT";
-    private static final String STEP_DELIMITER = "--";
+    private static final String DEPTH_DELIMITER = "--";
 
     private static String solution(Node node) {
         StringBuilder answer = new StringBuilder();
-        traverse(ROOT, node, answer);
+        traverse(node, 0, answer);
         return answer.toString().trim();
     }
 
-    private static void traverse(String key, Node node, StringBuilder result) {
-        if (!key.equals(ROOT)) {
-            result.append(key).append("\n");
+    private static void traverse(Node node, int depth, StringBuilder result) {
+        for (String each : node.children.keySet()) {
+            result.append(getValueWithStep(each, depth)).append("\n");
+            traverse(node.children.get(each), depth+1 ,result);
         }
-        if (node.nodes.isEmpty()) {
+    }
+
+    private static String getValueWithStep(String value, int depth) {
+        StringBuilder s = new StringBuilder();
+        for (int i = 0; i < depth; i++) {
+            s.append(DEPTH_DELIMITER);
+        }
+        return s.append(value).toString();
+    }
+
+    private static void insert(Node node, List<String> values, int index) {
+        if (index == values.size()) {
             return;
         }
-        for (String each : node.nodes.keySet()) {
-            traverse(each, node.nodes.get(each), result);
+        String value = values.get(index);
+        if (!node.children.containsKey(value)) {
+            node.children.put(value, new Node());
         }
+        insert(node.children.get(value), values, index+1);
     }
     
     public static void main(String[] args) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         int n = Integer.parseInt(in.readLine());
-        Node rootNode = new Node(ROOT);
+        Node node = new Node();
         for (int i = 0; i < n; i++) {
             String[] each = in.readLine().split(" ");
-            int step = Integer.parseInt(each[0]);
-            Node previous = rootNode;
-            for (int j = 1; j <= step; j++) {
-                StringBuilder sb = new StringBuilder();
-                for (int s = 1; s < j; s++) {
-                    sb.append(STEP_DELIMITER);
-                }
-                sb.append(each[j]);
-                String value = sb.toString();
-                if (!previous.nodes.containsKey(value)) {
-                    previous.nodes.put(value, new Node(value));
-                }
-                previous = previous.nodes.get(value);
+            int depth = Integer.parseInt(each[0]);
+            List<String> values = new ArrayList<>();
+            for (int index = 1; index <= depth; index++) {
+                values.add(each[index]);
             }
+            insert(node, values, 0);
         }
         in.close();
-        System.out.println(solution(rootNode));
+        System.out.println(solution(node));
     }
 }
 
 class Node {
 
     String value;
-    TreeMap<String, Node> nodes = new TreeMap<>();
-
-    Node(String value) {
-        this.value = value;
-    }
-
-    @Override
-    public String toString() {
-        return value + ": " + nodes;
-    }
+    TreeMap<String, Node> children = new TreeMap<>();
 }
