@@ -12,8 +12,7 @@ class Solution {
         previous = traverse(node.left, previous);
         node.right = previous;
         node.left = null;
-        previous = node;
-        return previous;
+        return node;
     }
 }
 
