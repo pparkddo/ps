@@ -157,3 +157,4 @@ dmypy.json
 # IDE
 .vscode/
 *.code-workspace
+.idea/
