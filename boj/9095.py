@@ -1,4 +1,4 @@
-def solution(number):
+def main(number):
     dp = []
 
     dp.append(1)
@@ -12,4 +12,4 @@ def solution(number):
 
 for _ in range(int(input())):
     number = int(input())
-    print(solution(number))
+    print(main(number))
