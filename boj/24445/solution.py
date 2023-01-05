@@ -22,7 +22,7 @@ class Solution:
             self.graph[b].append(a)
 
         for each_vertex in self.graph:
-            self.graph[each_vertex].sort()
+            self.graph[each_vertex].sort(reverse=True)
 
         self.bfs(r)
 
