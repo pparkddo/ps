@@ -90,3 +90,38 @@ class TabulationSolution:
                     dp[i] = max(dp[i], 1 + dp[j])
 
         return max(dp)
+
+
+# noinspection PyPep8Naming,DuplicatedCode,PyMethodMayBeStatic
+# https://leetcode.com/explore/interview/card/top-interview-questions-medium/111/dynamic-programming/810/discuss/1326552/Optimization-From-Brute-Force-to-Dynamic-Programming-Explained!
+class BinarySearchSolution:
+
+    def lengthOfLIS(self, nums: list[int]) -> int:
+
+        def binary_search(subsequence: list[int], value: int) -> int:
+            left: int = 0
+            right: int = len(subsequence) - 1
+
+            while left <= right:
+                mid: int = left + (right - left) // 2
+
+                if subsequence[mid] < value:
+                    left = mid + 1
+                elif subsequence[mid] > value:
+                    right = mid - 1
+                else:
+                    return mid
+
+            return left
+
+        subsequence: list[int] = []
+
+        for num in nums:
+            position = binary_search(subsequence, num)
+
+            if position == len(subsequence):
+                subsequence.append(num)
+            else:
+                subsequence[position] = num
+
+        return len(subsequence)
